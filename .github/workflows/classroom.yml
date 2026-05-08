@@ -1,6 +1,6 @@
 name: Autograding Tests
 'on':
-- push
+- workflow_dispatch
 - repository_dispatch
 permissions:
   checks: write
@@ -19,11 +19,9 @@ jobs:
       with:
         test-name: Q1
         setup-command: pip install numpy pytest
-        command: pytest test_AIstats_lab.py::test_joint_pmf test_AIstats_lab.py::test_marginals_discrete
+        command: pytest test_AIstats_lab.py::test_joint_pmf test_AIstats_lab.py::test_marginals
           test_AIstats_lab.py::test_conditional_pmf test_AIstats_lab.py::test_conditional_distribution
-          test_AIstats_lab.py::test_independence_discrete test_AIstats_lab.py::test_normalization_constant
-          test_AIstats_lab.py::test_joint_pdf_continuous test_AIstats_lab.py::test_marginal_fy
-          test_AIstats_lab.py::test_conditional_pdf test_AIstats_lab.py::test_conditional_pdf_integral
+          test_AIstats_lab.py::test_probability_sum_greater_than_3 test_AIstats_lab.py::test_independence_check
         timeout: 10
         max-score: 5
     - name: Q2
@@ -32,9 +30,9 @@ jobs:
       with:
         test-name: Q2
         setup-command: pip install numpy pytest
-        command: pytest test_AIstats_lab.py::test_sample_space test_AIstats_lab.py::test_expectations
-          test_AIstats_lab.py::test_variances test_AIstats_lab.py::test_covariance_and_correlation
-          test_AIstats_lab.py::test_independence_and_uncorrelated test_AIstats_lab.py::test_variance_sum_and_identity
+        command: pytest test_AIstats_lab.py::test_expectations test_AIstats_lab.py::test_variances
+          test_AIstats_lab.py::test_covariance_and_correlation test_AIstats_lab.py::test_variance_sum
+          test_AIstats_lab.py::test_variance_identity
         timeout: 10
         max-score: 5
     - name: Autograding Reporter
