@@ -1,18 +1,12 @@
+## `AI_stats_lab.py`
+
+
 import numpy as np
 
 
 # -------------------------------------------------
 # Sparse 4 by 4 Joint PMF
 # -------------------------------------------------
-
-# Joint PMF table as a 2D array (rows = x, cols = y)
-_TABLE = np.array([
-    [0.10, 0.05, 0.00, 0.00],
-    [0.15, 0.20, 0.05, 0.00],
-    [0.00, 0.10, 0.15, 0.05],
-    [0.00, 0.00, 0.05, 0.10],
-])
-
 
 def joint_pmf(x, y):
     """
@@ -24,27 +18,27 @@ def joint_pmf(x, y):
     x=2      0.00  0.10  0.15  0.05
     x=3      0.00  0.00  0.05  0.10
     """
-    if x not in range(4) or y not in range(4):
-        return 0.0
-    return _TABLE[x, y]
+    pmf = {
+        (0, 0): 0.10, (0, 1): 0.05, (0, 2): 0.00, (0, 3): 0.00,
+        (1, 0): 0.15, (1, 1): 0.20, (1, 2): 0.05, (1, 3): 0.00,
+        (2, 0): 0.00, (2, 1): 0.10, (2, 2): 0.15, (2, 3): 0.05,
+        (3, 0): 0.00, (3, 1): 0.00, (3, 2): 0.05, (3, 3): 0.10,
+    }
+    return pmf.get((x, y), 0.00)
 
 
 def marginal_px(x):
     """
     Compute PX(x) by summing joint_pmf(x, y) over y = 0,1,2,3.
     """
-    if x not in range(4):
-        return 0.0
-    return float(np.sum(_TABLE[x, :]))
+    return sum(joint_pmf(x, y) for y in range(4))
 
 
 def marginal_py(y):
     """
     Compute PY(y) by summing joint_pmf(x, y) over x = 0,1,2,3.
     """
-    if y not in range(4):
-        return 0.0
-    return float(np.sum(_TABLE[:, y]))
+    return sum(joint_pmf(x, y) for x in range(4))
 
 
 def conditional_pmf_x_given_y(x, y):
@@ -57,7 +51,7 @@ def conditional_pmf_x_given_y(x, y):
     """
     py = marginal_py(y)
     if py == 0:
-        return 0.0
+        return 0
     return joint_pmf(x, y) / py
 
 
@@ -80,12 +74,7 @@ def probability_sum_greater_than_3():
     """
     Compute P(X + Y > 3).
     """
-    total = 0.0
-    for x in range(4):
-        for y in range(4):
-            if x + y > 3:
-                total += joint_pmf(x, y)
-    return total
+    return sum(joint_pmf(x, y) for x in range(4) for y in range(4) if x + y > 3)
 
 
 def independence_check():
@@ -127,11 +116,7 @@ def expected_xy():
     """
     Compute E[XY].
     """
-    total = 0.0
-    for x in range(4):
-        for y in range(4):
-            total += x * y * joint_pmf(x, y)
-    return total
+    return sum(x * y * joint_pmf(x, y) for x in range(4) for y in range(4))
 
 
 def variance_x():
@@ -139,8 +124,7 @@ def variance_x():
     Compute Var(X).
     """
     ex = expected_x()
-    ex2 = sum(x**2 * marginal_px(x) for x in range(4))
-    return ex2 - ex**2
+    return sum((x - ex) ** 2 * marginal_px(x) for x in range(4))
 
 
 def variance_y():
@@ -148,8 +132,7 @@ def variance_y():
     Compute Var(Y).
     """
     ey = expected_y()
-    ey2 = sum(y**2 * marginal_py(y) for y in range(4))
-    return ey2 - ey**2
+    return sum((y - ey) ** 2 * marginal_py(y) for y in range(4))
 
 
 def covariance_xy():
@@ -167,21 +150,18 @@ def correlation_xy():
 
     rho_XY = Cov(X,Y) / sqrt( Var(X) * Var(Y) )
     """
-    return covariance_xy() / np.sqrt(variance_x() * variance_y())
+    denominator = np.sqrt(variance_x() * variance_y())
+    if denominator == 0:
+        return 0
+    return covariance_xy() / denominator
 
 
 def variance_sum():
     """
     Compute Var(X+Y).
     """
-    # E[X+Y] = E[X] + E[Y]
-    e_sum = expected_x() + expected_y()
-    # E[(X+Y)^2]
-    e_sum_sq = 0.0
-    for x in range(4):
-        for y in range(4):
-            e_sum_sq += (x + y)**2 * joint_pmf(x, y)
-    return e_sum_sq - e_sum**2
+    expected_sum = expected_x() + expected_y()
+    return sum(((x + y) - expected_sum) ** 2 * joint_pmf(x, y) for x in range(4) for y in range(4))
 
 
 def variance_identity_check():
@@ -192,6 +172,4 @@ def variance_identity_check():
 
     Return True if the identity holds, else False.
     """
-    lhs = variance_sum()
-    rhs = variance_x() + variance_y() + 2 * covariance_xy()
-    return bool(np.isclose(lhs, rhs))
+    return bool(np.isclose(variance_sum(), variance_x() + variance_y() + 2 * covariance_xy()))
