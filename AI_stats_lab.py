@@ -26,7 +26,7 @@ def joint_pmf(x, y):
     """
     if x not in range(4) or y not in range(4):
         return 0.0
-    return _TABLE[x, y]
+    return float(_TABLE[x, y])
 
 
 def marginal_px(x):
@@ -58,7 +58,7 @@ def conditional_pmf_x_given_y(x, y):
     py = marginal_py(y)
     if py == 0:
         return 0.0
-    return joint_pmf(x, y) / py
+    return float(joint_pmf(x, y) / py)
 
 
 def conditional_distribution_x_given_y(y):
@@ -85,7 +85,7 @@ def probability_sum_greater_than_3():
         for y in range(4):
             if x + y > 3:
                 total += joint_pmf(x, y)
-    return total
+    return float(total)
 
 
 def independence_check():
@@ -113,14 +113,14 @@ def expected_x():
     """
     Compute E[X].
     """
-    return sum(x * marginal_px(x) for x in range(4))
+    return float(sum(x * marginal_px(x) for x in range(4)))
 
 
 def expected_y():
     """
     Compute E[Y].
     """
-    return sum(y * marginal_py(y) for y in range(4))
+    return float(sum(y * marginal_py(y) for y in range(4)))
 
 
 def expected_xy():
@@ -131,7 +131,7 @@ def expected_xy():
     for x in range(4):
         for y in range(4):
             total += x * y * joint_pmf(x, y)
-    return total
+    return float(total)
 
 
 def variance_x():
@@ -140,7 +140,7 @@ def variance_x():
     """
     ex = expected_x()
     ex2 = sum(x**2 * marginal_px(x) for x in range(4))
-    return ex2 - ex**2
+    return float(ex2 - ex**2)
 
 
 def variance_y():
@@ -149,7 +149,7 @@ def variance_y():
     """
     ey = expected_y()
     ey2 = sum(y**2 * marginal_py(y) for y in range(4))
-    return ey2 - ey**2
+    return float(ey2 - ey**2)
 
 
 def covariance_xy():
@@ -158,7 +158,7 @@ def covariance_xy():
 
     Cov(X,Y) = E[XY] - E[X]*E[Y]
     """
-    return expected_xy() - expected_x() * expected_y()
+    return float(expected_xy() - expected_x() * expected_y())
 
 
 def correlation_xy():
@@ -167,21 +167,19 @@ def correlation_xy():
 
     rho_XY = Cov(X,Y) / sqrt( Var(X) * Var(Y) )
     """
-    return covariance_xy() / np.sqrt(variance_x() * variance_y())
+    return float(covariance_xy() / np.sqrt(variance_x() * variance_y()))
 
 
 def variance_sum():
     """
     Compute Var(X+Y).
     """
-    # E[X+Y] = E[X] + E[Y]
     e_sum = expected_x() + expected_y()
-    # E[(X+Y)^2]
     e_sum_sq = 0.0
     for x in range(4):
         for y in range(4):
             e_sum_sq += (x + y)**2 * joint_pmf(x, y)
-    return e_sum_sq - e_sum**2
+    return float(e_sum_sq - e_sum**2)
 
 
 def variance_identity_check():
