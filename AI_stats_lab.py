@@ -43,7 +43,7 @@ def joint_pmf(x, y):
 
 def marginal_px(x):
     """
-    Compute PX(x) by summing joint_pmf(x, y) over y = 0,1,2,3.
+    Compute PX(x) by summing joint_pmf(x, y) over y.
     """
 
     total = 0
@@ -56,7 +56,7 @@ def marginal_px(x):
 
 def marginal_py(y):
     """
-    Compute PY(y) by summing joint_pmf(x, y) over x = 0,1,2,3.
+    Compute PY(y) by summing joint_pmf(x, y) over x.
     """
 
     total = 0
@@ -70,10 +70,6 @@ def marginal_py(y):
 def conditional_pmf_x_given_y(x, y):
     """
     Compute P(X=x given Y=y).
-
-    P(X=x given Y=y) = joint_pmf(x,y) / PY(y)
-
-    If PY(y) is zero, return 0.
     """
 
     py = marginal_py(y)
@@ -86,15 +82,7 @@ def conditional_pmf_x_given_y(x, y):
 
 def conditional_distribution_x_given_y(y):
     """
-    Return conditional distribution of X given Y=y
-    as dictionary:
-
-    {
-        0: P(X=0 given Y=y),
-        1: P(X=1 given Y=y),
-        2: P(X=2 given Y=y),
-        3: P(X=3 given Y=y)
-    }
+    Return conditional distribution of X given Y=y.
     """
 
     distribution = {}
@@ -123,13 +111,7 @@ def probability_sum_greater_than_3():
 
 def independence_check():
     """
-    Return True if X and Y are independent.
-
-    X and Y are independent if:
-
-    joint_pmf(x,y) = PX(x) * PY(y)
-
-    for every x and y.
+    Check whether X and Y are independent.
     """
 
     for x in range(4):
@@ -221,8 +203,6 @@ def variance_y():
 def covariance_xy():
     """
     Compute Cov(X,Y).
-
-    Cov(X,Y) = E[XY] - E[X]*E[Y]
     """
 
     return expected_xy() - (expected_x() * expected_y())
@@ -230,9 +210,7 @@ def covariance_xy():
 
 def correlation_xy():
     """
-    Compute correlation coefficient:
-
-    rho_XY = Cov(X,Y) / sqrt( Var(X) * Var(Y) )
+    Compute correlation coefficient.
     """
 
     cov = covariance_xy()
@@ -271,11 +249,7 @@ def variance_sum():
 
 def variance_identity_check():
     """
-    Verify:
-
-    Var(X+Y) = Var(X) + Var(Y) + 2*Cov(X,Y)
-
-    Return True if the identity holds, else False.
+    Verify variance identity.
     """
 
     left_side = variance_sum()
